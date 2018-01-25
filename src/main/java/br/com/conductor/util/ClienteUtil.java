@@ -13,6 +13,11 @@ import br.com.conductor.response.ResponseCliente;
  */
 public class ClienteUtil {
 	
+	/**
+	 * Valida a nulabilidade dos campos do @Cliente
+	 * @param cliente
+	 * @return
+	 */
 	public static boolean validarCampos(Request cliente) {
 		if (!StringUtils.isEmpty(cliente.getCpf()) && !StringUtils.isEmpty(cliente.getEndereco())
 				&& !StringUtils.isEmpty(cliente.getIdade()) && !StringUtils.isEmpty(cliente.getNome())
@@ -24,10 +29,10 @@ public class ClienteUtil {
 	}
 	
 	/**
-	 * Método utilizado para alterar os valores informados do cliente e inserí-los na base.
+	 * Método utilizado para alterar os valores informados do cliente.
 	 * @param clienteNovo
 	 * @param clienteAntigo
-	 * @return Retorna o Cliente alterado.
+	 * @return Retorna o @Cliente alterado.
 	 */
 	public static Cliente validarAlteracao(Cliente clienteNovo, Cliente clienteAntigo) {
 				

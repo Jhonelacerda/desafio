@@ -3,12 +3,10 @@ package br.com.conductor.util;
 public enum EnumResponse {
 	
 	SUCESSO("00", "Realizado com sucesso"),
-	SALDO_ATUAL("01", "Salto Atual: "),
 	INFORMAR_CAMPO("94", "Favor informar todos os campos"),
 	INFORMAR_CPF("95", "Favor informar o CPF do cliente"),
 	CLIENTE_DUPLICADO("96", "O cliente já existe"),
 	CLIENTE_NAO_EXISTE("97","Cliente inexistente"),
-	LISTA_VAZIA("98","Não existe clientes"),
 	ERRO("99", "Erro Interno");
 	
 	private String codigo;

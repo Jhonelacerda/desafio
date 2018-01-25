@@ -1,7 +1,6 @@
 package br.com.conductor.service;
 
 
-import javax.persistence.Entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

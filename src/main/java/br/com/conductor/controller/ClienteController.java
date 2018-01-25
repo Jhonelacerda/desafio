@@ -1,9 +1,7 @@
 package br.com.conductor.controller;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +12,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.conductor.bean.Cliente;
-import br.com.conductor.repository.ClienteRepository;
 import br.com.conductor.request.Request;
 import br.com.conductor.response.Response;
 import br.com.conductor.response.ResponseCliente;
 import br.com.conductor.service.ClienteService;
 
+/**
+ * Classe de controle para os métodos de requisição
+ * @author Jhone
+ *
+ */
 @RestController
 @RequestMapping(path = "/cliente")
 public class ClienteController {
