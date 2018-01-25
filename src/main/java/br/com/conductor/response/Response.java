@@ -1,15 +1,22 @@
-package br.com.conductor.dto;
+package br.com.conductor.response;
 
-public class ResponseDTO {
+/**
+ * Classe utilizada para respostas no @ClienteController
+ * @author Jhone
+ *
+ */
+public class Response {
 	
 	private String codigo;
 	private String mensagem;
 	
-	public ResponseDTO(String codigo, String mensagem) {
+	public Response(String codigo, String mensagem) {
 		this.codigo = codigo;
 		this.mensagem = mensagem;
 	}
 
+	public Response() {
+	}
 	public String getCodigo() {
 		return codigo;
 	}

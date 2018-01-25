@@ -29,7 +29,7 @@ public class TestClienteRepository {
 	private EntityManager manager;
 	
 	@Test
-	public void TestSalvarCliente() {
+	public void testSalvarCliente() {
 		
 		Cliente cliente = new Cliente();
 		cliente.setCpf("11111111111");
@@ -44,7 +44,7 @@ public class TestClienteRepository {
 	}
 	
 	@Test
-	public void TestFindByCpf() {
+	public void testFindByCpf() {
 		
 		Cliente cliente = new Cliente();
 		cliente.setCpf("11111111111");

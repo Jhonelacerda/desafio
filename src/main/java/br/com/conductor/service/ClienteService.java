@@ -1,18 +1,27 @@
 package br.com.conductor.service;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import javax.persistence.Entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import br.com.conductor.bean.Cliente;
-import br.com.conductor.dto.ResponseClienteDTO;
-import br.com.conductor.dto.ResponseDTO;
+import br.com.conductor.converter.ClienteConverter;
 import br.com.conductor.repository.ClienteRepository;
-import br.com.conductor.util.ResponseEnun;
+import br.com.conductor.request.Request;
+import br.com.conductor.response.Response;
+import br.com.conductor.response.ResponseCliente;
+import br.com.conductor.util.ClienteUtil;
+import br.com.conductor.util.EnumResponse;
 
+/**
+ * Classe responsável pela lógica de negocio do cliente
+ * @author Jhone
+ *
+ */
 @Service
 public class ClienteService {
 
@@ -21,29 +30,27 @@ public class ClienteService {
 
 	/**
 	 * Método responsável por inserir um cliente na base de dados.
-	 * @param cliente
+	 * @param request
 	 * @return Retorna o objeto ResponseDTO que contém o código e a mensagem de resposta ao controller.
 	 */
-	public ResponseDTO cadastrarCliente(Cliente cliente) {
-		ResponseDTO response = null;
-		if (!StringUtils.isEmpty(cliente.getCpf()) && !StringUtils.isEmpty(cliente.getEndereco())
-				&& !StringUtils.isEmpty(cliente.getIdade()) && !StringUtils.isEmpty(cliente.getNome())
-				&& !StringUtils.isEmpty(cliente.getSaldo()) && !StringUtils.isEmpty(cliente.getSexo())) {
+	public Response cadastrarCliente(Request request) {
+		Response response = null;
+		if (ClienteUtil.validarCampos(request)) {
 			try {
-				Cliente clienteDuplicado = clienteRepository.findByCpf(cliente.getCpf());
+				Cliente clienteDuplicado = clienteRepository.findByCpf(request.getCpf());
 				if (clienteDuplicado == null) {
-					clienteRepository.save(cliente);
-					response = new ResponseDTO(ResponseEnun.SUCESSO.getCodigo(), ResponseEnun.SUCESSO.getMensagem());
+					clienteRepository.save(ClienteConverter.RequestToCliente(request));
+					response = ClienteUtil.response(EnumResponse.SUCESSO.getCodigo(), EnumResponse.SUCESSO.getMensagem());
 				} else {
-					response = new ResponseDTO(ResponseEnun.CLIENTE_DUPLICADO.getCodigo(),
-							ResponseEnun.CLIENTE_DUPLICADO.getMensagem());
+					response = ClienteUtil.response(EnumResponse.CLIENTE_DUPLICADO.getCodigo(),
+							EnumResponse.CLIENTE_DUPLICADO.getMensagem());
 				}
 			} catch (Exception e) {
-				response = new ResponseDTO(ResponseEnun.ERRO.getCodigo(), ResponseEnun.ERRO.getMensagem());
+				response = ClienteUtil.response(EnumResponse.ERRO.getCodigo(), EnumResponse.ERRO.getMensagem());
 			}
 		} else {
-			response = new ResponseDTO(ResponseEnun.INFORMAR_CAMPO.getCodigo(),
-					ResponseEnun.INFORMAR_CAMPO.getMensagem());
+			response = ClienteUtil.response(EnumResponse.INFORMAR_CAMPO.getCodigo(),
+					EnumResponse.INFORMAR_CAMPO.getMensagem());
 		}
 		return response;
 	}
@@ -53,24 +60,24 @@ public class ClienteService {
 	 * @param cpf
 	 * @return Retorna o objeto ResponseDTO que contém o código e a mensagem de resposta ao controller.
 	 */
-	public ResponseDTO excluirCliente(String cpf) {
-		ResponseDTO response = null;
+	public Response excluirCliente(String cpf) {
+		Response response = null;
 		if (cpf != null) {
 			try {
 				Cliente cliente = clienteRepository.findByCpf(cpf);
 				if (cliente != null) {
 					clienteRepository.delete(cliente);
-					response = new ResponseDTO(ResponseEnun.SUCESSO.getCodigo(), ResponseEnun.SUCESSO.getMensagem());
+					response = ClienteUtil.response(EnumResponse.SUCESSO.getCodigo(), EnumResponse.SUCESSO.getMensagem());
 				} else {
-					response = new ResponseDTO(ResponseEnun.CLIENTE_NAO_EXISTE.getCodigo(),
-							ResponseEnun.CLIENTE_NAO_EXISTE.getMensagem());
+					response = ClienteUtil.response(EnumResponse.CLIENTE_NAO_EXISTE.getCodigo(),
+							EnumResponse.CLIENTE_NAO_EXISTE.getMensagem());
 				}
 			} catch (Exception e) {
-				response = new ResponseDTO(ResponseEnun.ERRO.getCodigo(), ResponseEnun.ERRO.getMensagem());
+				response = ClienteUtil.response(EnumResponse.ERRO.getCodigo(), EnumResponse.ERRO.getMensagem());
 			}
 		} else {
-			response = new ResponseDTO(ResponseEnun.INFORMAR_CAMPO.getCodigo(),
-					ResponseEnun.INFORMAR_CAMPO.getMensagem());
+			response = ClienteUtil.response(EnumResponse.INFORMAR_CAMPO.getCodigo(),
+					EnumResponse.INFORMAR_CAMPO.getMensagem());
 		}
 		return response;
 	}
@@ -80,30 +87,24 @@ public class ClienteService {
 	 * @param cpf
 	 * @return Retorna o objeto ResponseClienteDTO que contém os atributos do cliente como resposta ao controller.
 	 */
-	public ResponseClienteDTO consultarCliente(String cpf) {
-		ResponseClienteDTO responseCliente = null;
+	public ResponseCliente consultarCliente(String cpf) {
+		ResponseCliente responseCliente = null;
 		if (cpf != null) {
 			try {
 				Cliente cliente = clienteRepository.findByCpf(cpf);
 				if (cliente != null) {
-					responseCliente = new ResponseClienteDTO();
-					responseCliente.setCpf(cliente.getCpf());
-					responseCliente.setEndereco(cliente.getEndereco());
-					responseCliente.setIdade(cliente.getIdade());
-					responseCliente.setNome(cliente.getNome());
-					responseCliente.setSaldo(cliente.getSaldo());
-					responseCliente.setSexo(cliente.getSexo());
+					responseCliente = ClienteConverter.ClienteToResponseCliente(cliente);
 				} else {
-					responseCliente = new ResponseClienteDTO(ResponseEnun.CLIENTE_NAO_EXISTE.getCodigo(),
-							ResponseEnun.CLIENTE_NAO_EXISTE.getMensagem());
+					responseCliente = ClienteUtil.response(EnumResponse.CLIENTE_NAO_EXISTE.getCodigo(),
+							EnumResponse.CLIENTE_NAO_EXISTE.getMensagem());
 				}
 			} catch (Exception e) {
-				responseCliente = new ResponseClienteDTO(ResponseEnun.ERRO.getCodigo(),
-						ResponseEnun.ERRO.getMensagem());
+				responseCliente = ClienteUtil.response(EnumResponse.ERRO.getCodigo(),
+						EnumResponse.ERRO.getMensagem());
 			}
 		} else {
-			responseCliente = new ResponseClienteDTO(ResponseEnun.INFORMAR_CAMPO.getCodigo(),
-					ResponseEnun.INFORMAR_CAMPO.getMensagem());
+			responseCliente = ClienteUtil.response(EnumResponse.INFORMAR_CAMPO.getCodigo(),
+					EnumResponse.INFORMAR_CAMPO.getMensagem());
 		}
 		return responseCliente;
 	}
@@ -113,93 +114,46 @@ public class ClienteService {
 	 * @param clienteNovo
 	 * @return Retorna o objeto ResponseClienteDTO que contém os atributos do cliente como resposta ao controller.
 	 */
-	public ResponseClienteDTO editarCliente(Cliente clienteNovo) {
-		ResponseClienteDTO responseCliente = null;
+	public ResponseCliente editarCliente(Cliente clienteNovo) {
+		ResponseCliente responseCliente = null;
 		if (clienteNovo.getCpf() != null) {
 			try {
 				Cliente clienteAntigo = clienteRepository.findByCpf(clienteNovo.getCpf());
-				if (clienteAntigo.getId() != null) {
-					Cliente ClienteAtualizado = updateCliente(clienteNovo, clienteAntigo);
-					responseCliente = new ResponseClienteDTO();
-					responseCliente.setCpf(ClienteAtualizado.getCpf());
-					responseCliente.setEndereco(ClienteAtualizado.getEndereco());
-					responseCliente.setIdade(ClienteAtualizado.getIdade());
-					responseCliente.setNome(ClienteAtualizado.getNome());
-					responseCliente.setSaldo(ClienteAtualizado.getSaldo());
-					responseCliente.setSexo(ClienteAtualizado.getSexo());
-					responseCliente.setCodigo(ResponseEnun.SUCESSO.getCodigo());
-					responseCliente.setMensagem(ResponseEnun.SUCESSO.getMensagem());
+				if (clienteAntigo != null) {
+					Cliente ClienteAtualizado = ClienteUtil.validarAlteracao(clienteNovo, clienteAntigo);
+					clienteRepository.save(ClienteAtualizado);
+					responseCliente = ClienteConverter.ClienteToResponseCliente(ClienteAtualizado);
+					responseCliente.setCodigo(EnumResponse.SUCESSO.getCodigo());
+					responseCliente.setMensagem(EnumResponse.SUCESSO.getMensagem());
 				} else {
-					responseCliente = new ResponseClienteDTO(ResponseEnun.CLIENTE_NAO_EXISTE.getCodigo(),
-							ResponseEnun.CLIENTE_NAO_EXISTE.getMensagem());
+					responseCliente = ClienteUtil.response(EnumResponse.CLIENTE_NAO_EXISTE.getCodigo(),
+							EnumResponse.CLIENTE_NAO_EXISTE.getMensagem());
 				}
 			} catch (Exception e) {
-				responseCliente = new ResponseClienteDTO(ResponseEnun.ERRO.getCodigo(),
-						ResponseEnun.ERRO.getMensagem());
+				responseCliente = ClienteUtil.response(EnumResponse.ERRO.getCodigo(),
+						EnumResponse.ERRO.getMensagem());
 			}
 		} else {
-			responseCliente = new ResponseClienteDTO(ResponseEnun.INFORMAR_CAMPO.getCodigo(),
-					ResponseEnun.INFORMAR_CAMPO.getMensagem());
+			responseCliente = ClienteUtil.response(EnumResponse.INFORMAR_CAMPO.getCodigo(),
+					EnumResponse.INFORMAR_CAMPO.getMensagem());
 		}
 		return responseCliente;
 	}
 
-	/**
-	 * Método utilizado para alterar os valores informados do cliente e inserí-los na base.
-	 * @param clienteNovo
-	 * @param clienteAntigo
-	 * @return Retorna o Cliente alterado.
-	 */
-	private Cliente updateCliente(Cliente clienteNovo, Cliente clienteAntigo) {
-		if (!StringUtils.isEmpty(clienteNovo.getNome())) {
-			clienteAntigo.setNome(clienteNovo.getNome());
-		}
-		if (!StringUtils.isEmpty(clienteNovo.getEndereco())) {
-			clienteAntigo.setEndereco(clienteNovo.getEndereco());
-		}
-		if (!StringUtils.isEmpty(clienteNovo.getIdade())) {
-			clienteAntigo.setIdade(clienteNovo.getIdade());
-		}
-		if (!StringUtils.isEmpty(clienteNovo.getSaldo())) {
-			clienteAntigo.setSaldo(clienteNovo.getSaldo());
-		}
-		if (!StringUtils.isEmpty(clienteNovo.getSexo())) {
-			clienteAntigo.setSexo(clienteNovo.getSexo());
-		}
-
-		return clienteRepository.save(clienteAntigo);
-	}
 
 	/**
-	 *  Método utilizado para listar todos os clientes existentes.
-	 * @return Retorna uma lista de objetos ResponseClienteDTO como resposta ao controller.
+	 *  Método utilizado para listar todos os clientes existentes por paginação.
+	 * @return Retorna uma lista de objetos @Cliente.
 	 */
-	public List<ResponseClienteDTO> listarClientes() {
-		ResponseClienteDTO response = null;
-		List<ResponseClienteDTO> responseList = new ArrayList<>();
-		ResponseClienteDTO responseCliente = null;
+	public Object listarClientes(Pageable pageble) {
+		Response response = null;
+		Page<Cliente> paginas = null;
 		try {
-			List<Cliente> listaClientes = clienteRepository.findAll();
-			if (!listaClientes.isEmpty()) {
-				for (Cliente cliente : listaClientes) {
-					responseCliente = new ResponseClienteDTO();
-					responseCliente.setCpf(cliente.getCpf());
-					responseCliente.setEndereco(cliente.getEndereco());
-					responseCliente.setIdade(cliente.getIdade());
-					responseCliente.setNome(cliente.getNome());
-					responseCliente.setSaldo(cliente.getSaldo());
-					responseCliente.setSexo(cliente.getSexo());
-					responseList.add(responseCliente);
-				}
-			} else {
-				responseCliente = new ResponseClienteDTO(ResponseEnun.LISTA_VAZIA.getCodigo(),
-						ResponseEnun.LISTA_VAZIA.getMensagem());
-			}
+			paginas = clienteRepository.findAll(pageble);
 		} catch (Exception e) {
-			response = new ResponseClienteDTO(ResponseEnun.INFORMAR_CAMPO.getCodigo(),
-					ResponseEnun.INFORMAR_CAMPO.getMensagem());
-			responseList.add(response);
+			response = ClienteUtil.response(EnumResponse.ERRO.getCodigo(), EnumResponse.ERRO.getMensagem());
+			return response;
 		}
-		return responseList;
+		return paginas;
 	}
 }

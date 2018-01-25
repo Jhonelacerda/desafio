@@ -3,6 +3,8 @@ package br.com.conductor.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,9 +14,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.conductor.bean.Cliente;
-import br.com.conductor.dto.RequestDTO;
-import br.com.conductor.dto.ResponseClienteDTO;
-import br.com.conductor.dto.ResponseDTO;
+import br.com.conductor.repository.ClienteRepository;
+import br.com.conductor.request.Request;
+import br.com.conductor.response.Response;
+import br.com.conductor.response.ResponseCliente;
 import br.com.conductor.service.ClienteService;
 
 @RestController
@@ -25,7 +28,7 @@ public class ClienteController {
 	private ClienteService service;
 	
 	/**
-	 * @api {put} /cliente/cadastrarCliente Cadastra um novo cliente.
+	 * @api {post} /cliente Cadastra um novo cliente.
 	 * @apiParamExample {json} Request-Example: 
 	 * {
 	 * 		"nome": "cliente2",
@@ -43,14 +46,14 @@ public class ClienteController {
 	 * 		"mensagem": "Realizado com sucesso"
 	 * }
 	 */
-	@RequestMapping(method = RequestMethod.PUT, value = "/cadastrarCliente")
-	public ResponseEntity<ResponseDTO> cadastrarCliente(@RequestBody Cliente request) {
-		ResponseDTO response = service.cadastrarCliente(request);
-		return new ResponseEntity<ResponseDTO>(response, HttpStatus.OK);
+	@RequestMapping(method = RequestMethod.POST)
+	public ResponseEntity<Response> cadastrarCliente(@RequestBody Request request) {
+		Response response = service.cadastrarCliente(request);
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 	
 	/**
-	 * @api {delete} /cliente/excluirCliente Exclui um cliente informado, utilizando o cpf
+	 * @api {delete} /cliente Exclui um cliente informado, utilizando o cpf
 	 * 
 	 * @apiParamExample {json} Request-Example: 
 	 *{
@@ -64,17 +67,17 @@ public class ClienteController {
 	 * 		"mensagem": "Realizado com sucesso"
 	 * }
 	 */
-	@RequestMapping(method = RequestMethod.DELETE, value = "/excluirCliente")
-	public ResponseEntity<ResponseDTO> excluirCliente(@RequestBody RequestDTO request) {
-		ResponseDTO response = service.excluirCliente(request.getCpf());
-		return new ResponseEntity<ResponseDTO>(response, HttpStatus.OK);
+	@RequestMapping(method = RequestMethod.DELETE)
+	public ResponseEntity<Response> excluirCliente(@RequestBody Request request) {
+		Response response = service.excluirCliente(request.getCpf());
+		return new ResponseEntity<Response>(response, HttpStatus.OK);
 	}
 	
 	/**
-	 * @api {get} /cliente/consultarCliente/{cpf} Realiza a consulta de um cliente
+	 * @api {get} /cliente/{cpf} Realiza a consulta de um cliente
 	 * @apiParamExample {json} Request-Example: 
 	 * 
-	 * http://localhost:8080/cliente/consultarCliente/22222222222
+	 * http://localhost:8080/cliente/22222222222
 	 * 
 	 * @apiSuccessExample {json} Success-Response:
 	 * 
@@ -87,14 +90,14 @@ public class ClienteController {
 	 * 		"saldo": 222
 	 * }
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/consultarCliente/{cpf}")
-	public ResponseEntity<ResponseClienteDTO> consultarCliente(@PathVariable("cpf") String cpf) {
-		ResponseClienteDTO response = service.consultarCliente(cpf);
-		return new ResponseEntity<ResponseClienteDTO>(response, HttpStatus.OK);
+	@RequestMapping(method = RequestMethod.GET, value = "/{cpf}")
+	public ResponseEntity<ResponseCliente> consultarCliente(@PathVariable("cpf") String cpf) {
+		ResponseCliente response = service.consultarCliente(cpf);
+		return new ResponseEntity<ResponseCliente>(response, HttpStatus.OK);
 	}
 	
 	/**
-	 * @api {put} /cliente/editarCliente Altera um cliente existente, utilizando o cpf
+	 * @api {put} /cliente Altera um cliente existente, utilizando o cpf
 	 * @apiParamExample {json} Request-Example: 
 	 * {
 	 * 		"nome": "cliente1",
@@ -118,17 +121,17 @@ public class ClienteController {
      *		"mensagem": "Realizado com sucesso"
 	 * }
 	 */
-	@RequestMapping(method = RequestMethod.PUT, value = "/editarCliente")
-	public ResponseEntity<ResponseClienteDTO> editarCliente(@RequestBody Cliente request) {
-		ResponseClienteDTO response = service.editarCliente(request);
-		return new ResponseEntity<ResponseClienteDTO>(response, HttpStatus.OK);
+	@RequestMapping(method = RequestMethod.PUT)
+	public ResponseEntity<ResponseCliente> editarCliente(@RequestBody Cliente request) {
+		ResponseCliente response = service.editarCliente(request);
+		return new ResponseEntity<ResponseCliente>(response, HttpStatus.OK);
 	}
 
 	/**
-	 * @api {get} /cliente/listarClientes Lista todos os clientes existentes
+	 * @api {get} /cliente Lista todos os clientes existentes
 	 * @apiParamExample {json} Request-Example: 
 	 * 
-	 * http://localhost:8080/cliente/listarClientes
+	 * http://localhost:8080/cliente?page=1&size=1&sort=nome
 	 * 
 	 * @apiSuccessExample {json} Success-Response:
 	 * 
@@ -151,10 +154,11 @@ public class ClienteController {
      *	}
 	 *]
 	 */
-	@RequestMapping(method = RequestMethod.GET, value = "/listarClientes")
-	public ResponseEntity<List<ResponseClienteDTO>> listarClientes() {
-		List<ResponseClienteDTO> response = service.listarClientes();
-		return new ResponseEntity<List<ResponseClienteDTO>>(response, HttpStatus.OK);
+	@RequestMapping(method = RequestMethod.GET)
+	public ResponseEntity<Object> listarClientes(Pageable page) {
+		Object response = service.listarClientes(page);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
 	
 }

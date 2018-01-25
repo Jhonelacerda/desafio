@@ -1,12 +1,17 @@
-package br.com.conductor.dto;
+package br.com.conductor.response;
 
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+/**
+ * Classe utilizada para respostas no @ClienteController
+ * @author Jhone
+ *
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ResponseClienteDTO {
+public class ResponseCliente extends Response{
 
 	private String nome;
 
@@ -21,17 +26,11 @@ public class ResponseClienteDTO {
 
 	private BigDecimal saldo;
 	
-	private String codigo;
-	
-	private String mensagem;
-	
-	public ResponseClienteDTO() {
+	public ResponseCliente() {
 	}
 	
-	public ResponseClienteDTO(String codigo, String mensagem) {
-		this.codigo = codigo;
-		this.mensagem = mensagem;
-		
+	public ResponseCliente(String codigo, String mensagem) {
+		super(codigo, mensagem);
 	}
 
 	public String getNome() {
@@ -82,20 +81,4 @@ public class ResponseClienteDTO {
 		this.saldo = saldo;
 	}
 
-	public String getCodigo() {
-		return codigo;
-	}
-
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-
-	public String getMensagem() {
-		return mensagem;
-	}
-
-	public void setMensagem(String mensagem) {
-		this.mensagem = mensagem;
-	}
-	
 }

@@ -8,7 +8,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
+/**
+ * Classe que representa o objeto Cliente
+ * @author Jhone
+ *
+ */
 @Entity
 @Table(name = "CLIENTE")
 public class Cliente {
@@ -17,22 +23,24 @@ public class Cliente {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
-	@Column(name = "NOME", nullable = false)
+	@Column(name = "NOME")
+	@NotNull
 	private String nome;
 	
-	@Column(name = "SEXO", nullable = false)
+	@Column(name = "SEXO")
 	private String sexo;
 	
-	@Column(name = "IDADE", nullable = false)
+	@Column(name = "IDADE")
 	private Integer idade;
 	
-	@Column(name = "CPF", nullable = false, unique = true)
+	@Column(name = "CPF", unique = true)
+	@NotNull
 	private String cpf;
 
-	@Column(name = "ENDERECO", nullable = false)
+	@Column(name = "ENDERECO")
 	private String endereco;
 	
-	@Column(name = "SALDO", nullable = false)
+	@Column(name = "SALDO")
 	private BigDecimal saldo;
 
 	public Long getId() {

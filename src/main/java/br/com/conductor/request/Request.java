@@ -1,11 +1,16 @@
-package br.com.conductor.dto;
+package br.com.conductor.request;
 
 import java.math.BigDecimal;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class RequestDTO {
+/**
+ * Classe utilizada como requisição no @ClienteController
+ * @author Jhone
+ *
+ */
+public class Request {
 
 	@JsonProperty("nome")
 	private String nome;

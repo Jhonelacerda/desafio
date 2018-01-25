@@ -1,6 +1,6 @@
 package br.com.conductor.util;
 
-public enum ResponseEnun {
+public enum EnumResponse {
 	
 	SUCESSO("00", "Realizado com sucesso"),
 	SALDO_ATUAL("01", "Salto Atual: "),
@@ -15,7 +15,7 @@ public enum ResponseEnun {
 	private String mensagem;
 	
 
-	private ResponseEnun(String codigo, String mensagem) {
+	private EnumResponse(String codigo, String mensagem) {
 		this.codigo = codigo;
 		this.mensagem = mensagem;
 	}
